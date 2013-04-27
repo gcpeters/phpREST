@@ -4,9 +4,9 @@ require_once("Rest.inc.php");
 class API extends REST {
 	public $data = "";
 	const DB_SERVER = "localhost";
-	const DB_USER = "Database_Username";
-	const DB_PASSWORD = "Database_Password";
-	const DB = "Database_Name";
+	const DB_USER = "gcpeters_admin";
+	const DB_PASSWORD = "Fr3aky17s4!";
+	const DB = "gcpeters_workouts";
 
 	private $db = NULL;
 
@@ -17,25 +17,28 @@ class API extends REST {
 
 	//Database connection
 	private function dbConnect() {
-		$this->db = mysql_connect(self::DB_SERVER, self::DB_USER, self::DB_PASSWORD);
-		
+		$this->db = mysql_connect(self::DB_SERVER,
+			self::DB_USER, self::DB_PASSWORD);
+
 		if ($this->db) {
+
 			mysql_select_db(self::DB, $this->db);
 		}
 	}
 
-	//Public method for access api.
-	//This method dynmically call the method based on the query string
+	// Public method for access api.
+	// This method dynmically call the method based on the query string
 	public function processApi() {
 		$func = strtolower(trim(str_replace("/", "", $_REQUEST['rquest'])));
-		
-		if ( (int) method_exists($this,$func) > 0 ) {
+
+		if ( (int) method_exists($this, $func) > 0 ) {
 
 			$this->$func();
 		} else {
 
 			$this->response('',404); 
 		}
+
 		// If the method not exist with in this class, response would be "Page not found".
 	}
 
@@ -46,12 +49,12 @@ class API extends REST {
 	private function workouts() {
 		// Cross validation if the request method is GET else it will return "Not Acceptable" status
 		if ($this->get_request_method() != "GET") {
-			$this->response('',406);
+
+ 			$this->response('',406);
 		}
 
 		$queryStr = "SELECT id, title, complete_date 
 					 FROM workouts 
-					 WHERE completed=1
 				 	 ORDER BY completed_date DESC";
 
 		$sql = mysql_query($queryStr, $this->db);
